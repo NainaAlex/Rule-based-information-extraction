@@ -16,55 +16,32 @@ import matplotlib.pyplot as plt
 #import ipython
 
 #load spaCy model
-
 nlp = spacy.load("en_core_web_sm")
 
-# sample text 
-text = "We eat vegetables at home, like spinach, potatoes etc." 
-text1 = "GDP in developing countries such as Vietnam will continue growing at a high rate."
+# sample text for X such as Y
+text = "GDP in developing countries such as Vietnam will continue growing at a high rate."
+mymodule.tok_func(nlp, text)
+pattern = [{'DEP':'amod', 'OP':"?"}, # adjectival modifier
+           {'POS':'NOUN'},
+           {'LOWER': 'such'},
+           {'LOWER': 'as'},
+           {'POS': 'PROPN'}]
+sp = mymodule.pattern_rec(nlp, text, pattern)
+print(sp)
 
-# create a spaCy object 
-document = nlp(text)
-document1 = nlp(text1)
+#sample text for pattern X and/or Y
+text1 = "Here is how you can keep your car and other vehicles clean."
+mymodule.tok_func(nlp, text1)
+pattern1 = [{'DEP':'amod', 'OP':"?"}, 
+           {'POS':'NOUN'}, 
+           {'LOWER': 'and', 'OP':"?"},
+           #'OP':'?' means optional exp, i. e. 'and'/'or' may or may not be there.
+           {'LOWER': 'or', 'OP':"?"}, 
+           {'LOWER': 'other'}, 
+           {'POS': 'NOUN'}] 
 
-mymodule.tok_func(document)
-mymodule.tok_func(document1)
+sp1 = mymodule.pattern_rec(nlp, text1, pattern1)
+print(sp1)
 
-pattern1 = [{'POS':'NOUN'},
-            {'LOWER': 'such'},
-            {'LOWER': 'as'},
-            {'POS': 'PROPN'}]
-
-pattern2 = [[{'POS':'VERB'},
-            {'POS':'NOUN'}],
-
-            [{'POS':'ADP'},
-            {'POS':'NOUN'},
-            {'DEP':'punct'},
-            {'POS':'NOUN'}]]
-
-pattern3 = [{'POS':'ADP'},
-            {'POS':'NOUN'},
-            {'DEP':'punct'},
-            {'POS':'NOUN'}]
-
-# Matcher class object 
-matcher = Matcher(nlp.vocab)
-matcher.add("matching_1", pattern2)
-
-matches = matcher(document)
-print(len(matches))
-
-for i in range(len(matches)):
-    span = document[matches[i][1]:matches[i][-1]]
-    print(span.text)
-
-span = document[matches[0][1]:matches[0][-1]]
-span1 = document[matches[len(matches)-1][1]:matches[len(matches)-1][-1]]
-
-print(span.text + ' ' + span1.text)
-
-#displacy.render(document, style='dep', jupyter=True)
-#mymodule.vis_dependency_parsing(text)
 
 
